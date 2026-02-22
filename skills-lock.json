@@ -11,6 +11,11 @@
       "sourceType": "github",
       "computedHash": "063a0e6448123cd359ad0044cc46b0e490cc7964d45ef4bb9fd842bd2ffbca67"
     },
+    "kotlin-spring-boot": {
+      "source": "ashchupliak/dream-team",
+      "sourceType": "github",
+      "computedHash": "335f96aabd7378d6ad31edc9b436d580bbc34924d7386aad1a72ab3a047e6898"
+    },
     "remotion-best-practices": {
       "source": "remotion-dev/skills",
       "sourceType": "github",
