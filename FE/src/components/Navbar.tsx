@@ -40,12 +40,45 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <a href="/" className="flex items-center gap-2 group">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-teal-500 to-teal-700 flex items-center justify-center shadow-md group-hover:shadow-teal-200 transition-shadow duration-200">
-              <span className="text-white font-bold text-sm">N</span>
-            </div>
-            <span className="font-bold text-lg text-gray-900 tracking-tight">
-              Hello<span className="text-teal-600">Notion</span>
+          <a
+            href="/"
+            aria-label="Hello Notion 홈"
+            className="flex items-center gap-2.5 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500/40 focus-visible:ring-offset-2 focus-visible:ring-offset-white rounded-xl"
+          >
+            <span className="relative w-8 h-8 rounded-xl bg-gradient-to-br from-teal-500 via-cyan-500 to-emerald-600 shadow-sm ring-1 ring-black/5 overflow-hidden transition-shadow duration-200 group-hover:shadow-[0_10px_26px_rgba(20,184,166,0.28)] motion-reduce:transition-none">
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 rounded-xl bg-[radial-gradient(circle_at_30%_25%,rgba(255,255,255,0.55),transparent_45%)] opacity-90"
+              />
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 rounded-xl bg-[linear-gradient(135deg,rgba(255,255,255,0.12),transparent_55%)]"
+              />
+              <span className="relative w-full h-full flex items-center justify-center text-white/95">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  className="w-[18px] h-[18px] drop-shadow-[0_1px_1px_rgba(0,0,0,0.22)]"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M7 17V7l10 10V7"
+                    stroke="currentColor"
+                    strokeWidth="2.2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </span>
+            </span>
+
+            <span className="flex items-baseline gap-0.5">
+              <span className="font-semibold text-[15px] text-gray-900 tracking-[-0.02em]">
+                Hello
+              </span>
+              <span className="font-semibold text-[15px] tracking-[-0.02em] bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">
+                Notion
+              </span>
             </span>
           </a>
 
