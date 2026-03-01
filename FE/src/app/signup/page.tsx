@@ -1,16 +1,33 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { getSupabase } from "@/lib/supabase";
 import Navbar from "@/components/Navbar";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const NICKNAME_RE = /^[a-zA-Z0-9_\uac00-\ud7a3]{2,20}$/;
+
+function randomNickname(): string {
+  const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+  let s = "user_";
+  for (let i = 0; i < 8; i++) s += chars[Math.floor(Math.random() * chars.length)];
+  return s;
+}
 
 function validateEmail(email: string): string | null {
   if (!email.trim()) return "이메일을 입력해 주세요.";
   if (!EMAIL_RE.test(email)) return "올바른 이메일 형식이 아닙니다.";
+  return null;
+}
+
+function validateNickname(nickname: string): string | null {
+  const t = nickname.trim();
+  if (!t) return "닉네임을 입력해 주세요.";
+  if (t.length < 2) return "닉네임은 2자 이상이어야 합니다.";
+  if (t.length > 20) return "닉네임은 20자 이하여야 합니다.";
+  if (!NICKNAME_RE.test(t)) return "닉네임은 영문, 숫자, 한글, _ 만 사용할 수 있습니다.";
   return null;
 }
 
@@ -45,13 +62,56 @@ function getSignUpAuthErrorMessage(error: unknown): string {
 export default function SignupPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
+  const [nickname, setNickname] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [checkingSession, setCheckingSession] = useState(true);
+  const [nicknameCheckStatus, setNicknameCheckStatus] = useState<"idle" | "checking" | "available" | "taken">("idle");
+  const nicknameCheckTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastCheckedNickRef = useRef("");
+
+  // 마운트 시 랜덤 닉네임 한 번만 설정 (빈 문자열일 때만)
+  useEffect(() => {
+    if (nickname === "" && typeof window !== "undefined") {
+      setNickname(randomNickname());
+    }
+  }, []);
+
+  // 닉네임 입력 디바운스 후 사용 가능 여부 체크
+  const checkNicknameAvailable = useCallback(async (nick: string) => {
+    const trimmed = nick.trim();
+    if (trimmed.length < 2) {
+      setNicknameCheckStatus("idle");
+      return;
+    }
+    setNicknameCheckStatus("checking");
+    lastCheckedNickRef.current = trimmed;
+    const { data, error: rpcError } = await getSupabase().rpc("nickname_available", { nick: trimmed });
+    if (lastCheckedNickRef.current !== trimmed) return;
+    if (rpcError) {
+      setNicknameCheckStatus("idle");
+      return;
+    }
+    setNicknameCheckStatus(data === true ? "available" : "taken");
+  }, []);
 
   useEffect(() => {
+    if (nicknameCheckTimeoutRef.current) clearTimeout(nicknameCheckTimeoutRef.current);
+    const t = nickname.trim();
+    if (t.length < 2) {
+      setNicknameCheckStatus("idle");
+      return;
+    }
+    nicknameCheckTimeoutRef.current = setTimeout(() => {
+      nicknameCheckTimeoutRef.current = null;
+      checkNicknameAvailable(nickname);
+    }, 400);
+    return () => {
+      if (nicknameCheckTimeoutRef.current) clearTimeout(nicknameCheckTimeoutRef.current);
+    };
+  }, [nickname, checkNicknameAvailable]);
     const checkSession = async () => {
       const { data } = await getSupabase().auth.getSession();
       if (data.session) {
@@ -68,10 +128,23 @@ export default function SignupPage() {
     setError(null);
 
     const emailErr = validateEmail(email);
+    const nicknameErr = validateNickname(nickname);
     const passwordErr = validatePassword(password);
     const confirmErr = validatePasswordMatch(password, passwordConfirm);
-    if (emailErr || passwordErr || confirmErr) {
-      setError(emailErr ?? passwordErr ?? confirmErr ?? null);
+    if (emailErr || nicknameErr || passwordErr || confirmErr) {
+      setError(emailErr ?? nicknameErr ?? passwordErr ?? confirmErr ?? null);
+      return;
+    }
+    if (nicknameCheckStatus === "taken") {
+      setError("이미 사용 중인 닉네임입니다. 다른 닉네임을 입력해 주세요.");
+      return;
+    }
+    if (nicknameCheckStatus === "checking") {
+      setError("닉네임 사용 가능 여부를 확인 중입니다. 잠시 후 다시 시도해 주세요.");
+      return;
+    }
+    if (nicknameCheckStatus === "idle" && nickname.trim().length >= 2) {
+      setError("닉네임 사용 가능 여부를 확인해 주세요.");
       return;
     }
 
@@ -82,6 +155,7 @@ export default function SignupPage() {
         password,
         options: {
           emailRedirectTo: `${typeof window !== "undefined" ? window.location.origin : ""}/auth/callback`,
+          data: { nickname: nickname.trim() },
         },
       });
       if (signUpError) throw signUpError;
@@ -103,6 +177,9 @@ export default function SignupPage() {
   const isValid =
     email.trim() &&
     EMAIL_RE.test(email.trim()) &&
+    nickname.trim().length >= 2 &&
+    NICKNAME_RE.test(nickname.trim()) &&
+    nicknameCheckStatus === "available" &&
     password.length >= 6 &&
     password === passwordConfirm;
   const isDisabled = loading || checkingSession || !isValid;
@@ -144,6 +221,41 @@ export default function SignupPage() {
                   disabled={loading}
                   aria-invalid={!!error}
                 />
+              </div>
+              <div>
+                <label htmlFor="nickname" className="block text-sm font-medium text-gray-700 mb-1.5">
+                  닉네임
+                </label>
+                <input
+                  id="nickname"
+                  type="text"
+                  autoComplete="username"
+                  value={nickname}
+                  onChange={(e) => setNickname(e.target.value)}
+                  placeholder="2~20자, 영문/숫자/한글/_"
+                  className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
+                  disabled={loading}
+                  aria-invalid={!!error || nicknameCheckStatus === "taken"}
+                  aria-describedby={nicknameCheckStatus !== "idle" ? "nickname-status" : undefined}
+                />
+                {nickname.trim().length >= 2 && (
+                  <p
+                    id="nickname-status"
+                    className="mt-1 text-sm"
+                    aria-live="polite"
+                    role="status"
+                  >
+                    {nicknameCheckStatus === "checking" && (
+                      <span className="text-gray-500">확인 중...</span>
+                    )}
+                    {nicknameCheckStatus === "available" && (
+                      <span className="text-teal-600">사용 가능한 닉네임입니다.</span>
+                    )}
+                    {nicknameCheckStatus === "taken" && (
+                      <span className="text-red-600">이미 사용 중인 닉네임입니다.</span>
+                    )}
+                  </p>
+                )}
               </div>
               <div>
                 <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1.5">
