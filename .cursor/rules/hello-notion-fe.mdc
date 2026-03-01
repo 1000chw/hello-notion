@@ -1,0 +1,11 @@
+---
+description: Hello Notion frontend: Next.js pages, components, and UI. Apply when editing main site FE.
+globs: "**/frontend/**/*.tsx", "**/app/**"
+alwaysApply: false
+---
+
+# Hello Notion Frontend
+
+- Use hello-notion-fe and vercel-react-best-practices. Prefer Server Components; minimal props across server/client boundary.
+- Structure: app/ for routes, components/ for UI, lib/ for API and auth helpers.
+- Auth UI integrates with Supabase Auth. Keep accessibility and responsive layout.

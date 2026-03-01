@@ -1,0 +1,12 @@
+---
+description: Supabase usage for Hello Notion: DB, Auth, and backend connection.
+globs: "**/supabase/**", "**/backend/**/*.kt", "**/.env*"
+alwaysApply: false
+---
+
+# Hello Notion Supabase
+
+- Use Supabase MCP for migrations (`apply_migration`), schema inspection (`list_tables`), and project URL/keys.
+- Migration names: snake_case (e.g. `add_widgets_table`).
+- Auth: anon key for FE with RLS; service role or JWT for BE only; never expose service role to client.
+- BE (Kotlin): connect via PostgREST (HTTP) or JDBC (server-only); keep connection details in env.

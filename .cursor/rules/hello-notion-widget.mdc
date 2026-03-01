@@ -1,0 +1,10 @@
+---
+description: Hello Notion Notion widget: embeddable UI and widget API. Apply when editing widgets.
+globs: "**/widgets/**", "**/widget/**"
+alwaysApply: false
+---
+
+# Hello Notion Widget
+
+- Use hello-notion-widget and frontend-design. Respect iframe/embed constraints; small bundle, postMessage for parent.
+- Widget registration and data via Hello Notion API and Supabase. No secrets in widget bundle; validate origin where needed.

@@ -1,0 +1,9 @@
+server:
+  port: 8080
+
+# Supabase JWT validation (from env: SUPABASE_JWT_SECRET)
+supabase:
+  jwt:
+    secret: ${SUPABASE_JWT_SECRET:}
+    # Optional: validate issuer, e.g. https://<project-id>.supabase.co/auth/v1
+    issuer: ${SUPABASE_JWT_ISSUER:}

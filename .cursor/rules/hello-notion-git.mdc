@@ -1,0 +1,11 @@
+---
+description: Git commit and PR format for Hello Notion. Apply when making commits or writing PR descriptions.
+globs:
+alwaysApply: false
+---
+
+# Hello Notion Git
+
+- **Commit**: `type(scope): description` — type: feat|fix|docs|chore|refactor|test; scope: frontend|backend|widget|infra.
+- **Branch**: `feat/xxx`, `fix/xxx`, `docs/xxx`, `chore/xxx`.
+- **PR**: Clear title; body with summary, how to test, and any breaking/migration notes.

@@ -1,0 +1,11 @@
+---
+description: Hello Notion BE (Kotlin/Spring Boot) and FE (Next.js) scaffolding and structure conventions.
+globs: "**/backend/**", "**/frontend/**", "**/apps/**"
+alwaysApply: false
+---
+
+# Hello Notion Stack
+
+- **Backend**: Kotlin + Spring Boot 3.x under `backend/` or `apps/backend/`. Use controller, service, repository, model packages. Follow kotlin-spring-boot patterns.
+- **Frontend**: Next.js App Router under `frontend/` or `apps/frontend/`. Use app/, components/, lib/. Follow vercel-react-best-practices.
+- Keep API contracts and env (e.g. `NEXT_PUBLIC_API_URL`) consistent between FE and BE.

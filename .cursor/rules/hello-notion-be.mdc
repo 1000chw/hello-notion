@@ -1,0 +1,11 @@
+---
+description: Hello Notion backend: Kotlin, Spring Boot, Supabase. Apply when editing BE APIs or DB.
+globs: "**/backend/**/*.kt"
+alwaysApply: false
+---
+
+# Hello Notion Backend
+
+- Use hello-notion-be, kotlin-spring-boot, hello-notion-supabase. Controller / service / repository / model structure.
+- Consistent DTOs and error format; validate Supabase JWT on protected routes.
+- Migrations via Supabase MCP, snake_case names. No secrets in client.

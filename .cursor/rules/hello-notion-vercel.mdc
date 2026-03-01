@@ -1,0 +1,11 @@
+---
+description: Vercel deployment and configuration for Hello Notion frontend.
+globs: "**/frontend/**", "vercel.json", "**/next.config.*"
+alwaysApply: false
+---
+
+# Hello Notion Vercel
+
+- Deploy Next.js app (frontend) to Vercel; use Vercel MCP/CLI when available.
+- Set env in Vercel: `NEXT_PUBLIC_*` for client; keep API keys and secrets server-only.
+- Separate preview and production envs. Avoid committing secrets; use Vercel dashboard for sensitive vars.
