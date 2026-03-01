@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 const footerLinks = [
   {
     heading: "위젯",
@@ -31,14 +33,14 @@ export default function Footer() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* Brand */}
           <div className="sm:col-span-2 lg:col-span-1">
-            <a href="/" className="inline-flex items-center gap-2 group mb-4">
+            <Link href="/" className="inline-flex items-center gap-2 group mb-4">
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-teal-500 to-teal-700 flex items-center justify-center shadow-md">
                 <span className="text-white font-bold text-sm">N</span>
               </div>
               <span className="font-bold text-lg text-white tracking-tight">
                 Hello<span className="text-teal-400">Notion</span>
               </span>
-            </a>
+            </Link>
             <p className="text-sm text-gray-400 leading-relaxed max-w-xs">
               링크 하나로 노션에 바로 임베딩. 설치 없이, 무료로 시작하세요.
             </p>

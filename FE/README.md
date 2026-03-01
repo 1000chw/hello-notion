@@ -1,5 +1,16 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Environment
+
+로그인 기능을 사용하려면 Supabase 환경 변수를 설정하세요. `.env.example`을 참고해 `.env.local`에 값을 넣습니다.
+
+```
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+```
+
+Supabase Dashboard → Project Settings → API에서 URL과 anon key를 확인할 수 있습니다.
+
 ## Getting Started
 
 First, run the development server:

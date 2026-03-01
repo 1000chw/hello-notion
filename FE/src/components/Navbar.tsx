@@ -1,11 +1,12 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import Link from "next/link";
 import { Search, Menu, X } from "lucide-react";
 import { clsx } from "clsx";
 
 const navLinks = [
-  { label: "위젯 갤러리", href: "#gallery" },
+  { label: "위젯 갤러리", href: "/gallery" },
   { label: "사용 방법", href: "#how-it-works" },
   { label: "요금제", href: "#pricing" },
 ];
@@ -40,7 +41,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <a
+          <Link
             href="/"
             aria-label="Hello Notion 홈"
             className="flex items-center gap-2.5 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500/40 focus-visible:ring-offset-2 focus-visible:ring-offset-white rounded-xl"
@@ -80,19 +81,29 @@ export default function Navbar() {
                 Notion
               </span>
             </span>
-          </a>
+          </Link>
 
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-6">
-            {navLinks.map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                className="text-sm font-medium text-gray-600 hover:text-teal-600 transition-colors duration-150 cursor-pointer"
-              >
-                {link.label}
-              </a>
-            ))}
+            {navLinks.map((link) =>
+              link.href.startsWith("/") ? (
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  className="text-sm font-medium text-gray-600 hover:text-teal-600 transition-colors duration-150 cursor-pointer"
+                >
+                  {link.label}
+                </Link>
+              ) : (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  className="text-sm font-medium text-gray-600 hover:text-teal-600 transition-colors duration-150 cursor-pointer"
+                >
+                  {link.label}
+                </a>
+              )
+            )}
           </div>
 
           {/* Right side */}
@@ -169,16 +180,27 @@ export default function Navbar() {
             />
           </div>
 
-          {navLinks.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              onClick={() => setMobileOpen(false)}
-              className="block px-3 py-2.5 text-sm font-medium text-gray-700 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition-colors cursor-pointer"
-            >
-              {link.label}
-            </a>
-          ))}
+          {navLinks.map((link) =>
+            link.href.startsWith("/") ? (
+              <Link
+                key={link.label}
+                href={link.href}
+                onClick={() => setMobileOpen(false)}
+                className="block px-3 py-2.5 text-sm font-medium text-gray-700 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition-colors cursor-pointer"
+              >
+                {link.label}
+              </Link>
+            ) : (
+              <a
+                key={link.label}
+                href={link.href}
+                onClick={() => setMobileOpen(false)}
+                className="block px-3 py-2.5 text-sm font-medium text-gray-700 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition-colors cursor-pointer"
+              >
+                {link.label}
+              </a>
+            )
+          )}
 
           <div className="pt-3 pb-1 flex flex-col gap-2 border-t border-gray-100 mt-2">
             <a
