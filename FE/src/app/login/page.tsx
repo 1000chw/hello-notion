@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { getSupabase } from "@/lib/supabase";
+import { getSupabase, hasValidSession } from "@/lib/supabase";
 import Navbar from "@/components/Navbar";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -37,11 +37,11 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [checkingSession, setCheckingSession] = useState(true);
 
-  // 이미 로그인된 세션이면 / 로 리다이렉트
+  // 서버로 세션 검증 후, 유효할 때만 / 로 리다이렉트 (만료/잘못된 토큰은 로그인 화면 유지)
   useEffect(() => {
     const checkSession = async () => {
-      const { data } = await getSupabase().auth.getSession();
-      if (data.session) {
+      const valid = await hasValidSession();
+      if (valid) {
         router.replace("/");
         return;
       }
