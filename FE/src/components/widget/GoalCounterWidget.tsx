@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import { Outfit } from "next/font/google";
 
 const outfit = Outfit({
@@ -44,38 +43,32 @@ function buildSearchParams(desc: string, goal: number, current: number, bg: stri
 export default function GoalCounterWidget() {
 	const pathname = usePathname();
 	const searchParams = useSearchParams();
+	const router = useRouter();
 
-	const [description, setDescription] = useState("");
-	const [goalCount, setGoalCount] = useState(1);
-	const [currentCount, setCurrentCount] = useState(0);
-	const [bgValue, setBgValue] = useState("white");
-	const [isInitializing, setIsInitializing] = useState(true);
-
-	useEffect(() => {
-		const desc = searchParams.get("desc") ?? "";
-		const goal = parseNumber(searchParams.get("goal"), 1);
-		const current = parseNumber(searchParams.get("current"), 0);
-		const bg = searchParams.get("bg") ?? "white";
-		setDescription(desc);
-		setGoalCount(goal);
-		setCurrentCount(Math.min(current, goal));
-		setBgValue(BG_OPTIONS.some((o) => o.value === bg) ? bg : "white");
-		setIsInitializing(false);
-	}, [searchParams]);
-
-	useEffect(() => {
-		if (isInitializing) return;
-		const query = buildSearchParams(description, goalCount, currentCount, bgValue);
-		const url = query ? `${pathname}${query}` : pathname;
-		window.history.replaceState(null, "", url);
-	}, [description, goalCount, currentCount, bgValue, isInitializing, pathname]);
+	// Derive from URL (single source of truth). No effect → no cascading setState.
+	const description = searchParams.get("desc") ?? "";
+	const goalCount = Math.max(1, parseNumber(searchParams.get("goal"), 1));
+	const currentCount = Math.min(
+		parseNumber(searchParams.get("current"), 0),
+		goalCount
+	);
+	const bgParam = searchParams.get("bg") ?? "white";
+	const bgValue = BG_OPTIONS.some((o) => o.value === bgParam) ? bgParam : "white";
 
 	const handlePlus = () => {
-		setCurrentCount((c) => Math.min(c + 1, goalCount));
+		const next = Math.min(currentCount + 1, goalCount);
+		router.replace(
+			`${pathname}${buildSearchParams(description, goalCount, next, bgValue)}`,
+			{ scroll: false }
+		);
 	};
 
 	const handleMinus = () => {
-		setCurrentCount((c) => Math.max(0, c - 1));
+		const next = Math.max(0, currentCount - 1);
+		router.replace(
+			`${pathname}${buildSearchParams(description, goalCount, next, bgValue)}`,
+			{ scroll: false }
+		);
 	};
 
 	const bgClass = getBgClass(bgValue);
