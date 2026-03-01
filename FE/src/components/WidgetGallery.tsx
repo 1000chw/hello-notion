@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Copy, Check, Clock, Calendar, Cloud, Timer, CheckSquare, Quote, Users, Music, Target } from "lucide-react";
 import { clsx } from "clsx";
 
@@ -108,8 +108,13 @@ function WidgetCard({ widget }: { widget: (typeof widgets)[0] }) {
       : `${typeof window !== "undefined" ? window.location.origin : ""}${widget.link}`;
     navigator.clipboard.writeText(url);
     setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
   };
+
+  useEffect(() => {
+    if (!copied) return;
+    const timerId = setTimeout(() => setCopied(false), 2000);
+    return () => clearTimeout(timerId);
+  }, [copied]);
 
   return (
     <div className="group relative bg-white rounded-2xl border border-gray-100 p-5 hover:shadow-md hover:border-gray-200 transition-all duration-200 cursor-pointer flex flex-col gap-4">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 
 function parseNumber(value: string | null, fallback: number): number {
@@ -25,8 +25,9 @@ export default function GoalCounterWidget() {
   const [description, setDescription] = useState("");
   const [goalCount, setGoalCount] = useState(1);
   const [currentCount, setCurrentCount] = useState(0);
+  const [isInitializing, setIsInitializing] = useState(true);
 
-  // Initialize from URL searchParams (and optionally sync from localStorage for same URL)
+  // 1. URL 파라미터로 상태 초기화
   useEffect(() => {
     const desc = searchParams.get("desc") ?? "";
     const goal = parseNumber(searchParams.get("goal"), 1);
@@ -34,41 +35,36 @@ export default function GoalCounterWidget() {
     setDescription(desc);
     setGoalCount(goal);
     setCurrentCount(Math.min(current, goal));
+    setIsInitializing(false);
   }, [searchParams]);
 
-  const updateUrl = useCallback(
-    (desc: string, goal: number, current: number) => {
-      const query = buildSearchParams(desc, goal, current);
-      const url = query ? `${pathname}${query}` : pathname;
-      window.history.replaceState(null, "", url);
-    },
-    [pathname]
-  );
+  // 2. 상태 변경 시 URL 업데이트 (부수 효과)
+  useEffect(() => {
+    if (isInitializing) return;
 
+    const query = buildSearchParams(description, goalCount, currentCount);
+    const url = query ? `${pathname}${query}` : pathname;
+    window.history.replaceState(null, "", url);
+  }, [description, goalCount, currentCount, isInitializing, pathname]);
+
+  // 3. 핸들러는 상태 업데이트만 담당
   const handleDescChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const v = e.target.value;
-    setDescription(v);
-    updateUrl(v, goalCount, currentCount);
+    setDescription(e.target.value);
   };
 
   const handleGoalChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const v = parseNumber(e.target.value || null, 1);
-    const goal = Math.max(1, v);
-    setGoalCount(goal);
-    setCurrentCount((c) => Math.min(c, goal));
-    updateUrl(description, goal, Math.min(currentCount, goal));
+    const newGoal = Math.max(1, v);
+    setGoalCount(newGoal);
+    setCurrentCount((c) => Math.min(c, newGoal));
   };
 
   const handlePlus = () => {
-    const next = Math.min(currentCount + 1, goalCount);
-    setCurrentCount(next);
-    updateUrl(description, goalCount, next);
+    setCurrentCount((c) => Math.min(c + 1, goalCount));
   };
 
   const handleMinus = () => {
-    const next = Math.max(0, currentCount - 1);
-    setCurrentCount(next);
-    updateUrl(description, goalCount, next);
+    setCurrentCount((c) => Math.max(0, c - 1));
   };
 
   return (

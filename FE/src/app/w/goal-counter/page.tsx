@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, Suspense } from "react";
+import { useState, useEffect, Suspense } from "react";
 import GoalCounterWidget from "@/components/widget/GoalCounterWidget";
 import { Copy, Check } from "lucide-react";
 
@@ -11,8 +11,13 @@ export default function GoalCounterPage() {
     if (typeof window === "undefined") return;
     navigator.clipboard.writeText(window.location.href);
     setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
   };
+
+  useEffect(() => {
+    if (!copied) return;
+    const timerId = setTimeout(() => setCopied(false), 2000);
+    return () => clearTimeout(timerId);
+  }, [copied]);
 
   return (
     <div className="min-h-screen bg-gray-50/80 py-6 px-4">
