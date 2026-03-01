@@ -1,10 +1,20 @@
 "use client";
 
-import { useState } from "react";
-import { Copy, Check, Clock, Calendar, Cloud, Timer, CheckSquare, Quote, Users, Music } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Copy, Check, Clock, Calendar, Cloud, Timer, CheckSquare, Quote, Users, Music, Target } from "lucide-react";
 import { clsx } from "clsx";
 
 const widgets = [
+  {
+    id: "goal-counter",
+    name: "목표 달성 카운터",
+    description: "목표 설명·개수·현재 달성 개수를 URL에 담아 노션에 임베드. 링크 복사 후 노션 /embed에 붙여넣으면 됩니다.",
+    icon: Target,
+    color: "bg-emerald-50",
+    iconColor: "text-emerald-600",
+    tags: ["생산성", "무료"],
+    link: "/w/goal-counter",
+  },
   {
     id: "clock",
     name: "미니멀 시계",
@@ -93,10 +103,18 @@ function WidgetCard({ widget }: { widget: (typeof widgets)[0] }) {
 
   const handleCopy = (e: React.MouseEvent) => {
     e.preventDefault();
-    navigator.clipboard.writeText(widget.link);
+    const url = widget.link.startsWith("http")
+      ? widget.link
+      : `${typeof window !== "undefined" ? window.location.origin : ""}${widget.link}`;
+    navigator.clipboard.writeText(url);
     setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
   };
+
+  useEffect(() => {
+    if (!copied) return;
+    const timerId = setTimeout(() => setCopied(false), 2000);
+    return () => clearTimeout(timerId);
+  }, [copied]);
 
   return (
     <div className="group relative bg-white rounded-2xl border border-gray-100 p-5 hover:shadow-md hover:border-gray-200 transition-all duration-200 cursor-pointer flex flex-col gap-4">
