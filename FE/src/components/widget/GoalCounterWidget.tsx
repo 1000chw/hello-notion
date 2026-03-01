@@ -58,8 +58,8 @@ export default function GoalCounterWidget(props: {
 		});
 	}, []);
 
-	// 임베드에서 목표 수정용 로컬 state (커서 점프 방지). URL goal 변경 시 동기화
-	const [editingGoal, setEditingGoal] = useState(1);
+	// 임베드에서 목표 수정용 로컬 state (커서 점프 방지). URL goal 변경 시 동기화. 빈 값 허용 → blur 시 1로 적용
+	const [editingGoal, setEditingGoal] = useState<number | "">(1);
 	const [isEditingGoal, setIsEditingGoal] = useState(false);
 	const goalInputRef = useRef<HTMLInputElement>(null);
 	const urlGoal = Math.max(1, parseNumber(searchParams.get("goal"), 1));
@@ -79,8 +79,10 @@ export default function GoalCounterWidget(props: {
 	const description = overrideDesc !== undefined ? overrideDesc : urlDesc;
 	const goalCount = overrideGoal !== undefined ? Math.max(1, overrideGoal) : urlGoal;
 	const currentCount = Math.min(urlCurrent, goalCount);
-	// 임베드에서 수정 중인 목표 반영 (blur 전에도 프로그레스·버튼에 반영)
-	const effectiveGoal = isEmbedded ? Math.max(1, editingGoal) : goalCount;
+	// 임베드에서 수정 중인 목표 반영 (blur 전에도 프로그레스·버튼에 반영). 빈 값이면 1로 간주
+	const effectiveGoal = isEmbedded
+		? (editingGoal === "" ? 1 : Math.max(1, editingGoal))
+		: goalCount;
 	const effectiveCurrent = Math.min(currentCount, effectiveGoal);
 	const bgParam = searchParams.get("bg") ?? "white";
 	const bgValue = BG_OPTIONS.some((o) => o.value === bgParam) ? bgParam : "white";
@@ -101,10 +103,14 @@ export default function GoalCounterWidget(props: {
 		);
 	};
 
-	// 임베드에서 목표 변경 시 URL 반영
+	// 임베드에서 목표 변경 시 URL 반영. 비어 있거나 1 미만이면 1로 적용
 	const handleGoalBlur = () => {
 		setIsEditingGoal(false);
-		const g = Math.max(1, editingGoal);
+		const g =
+			editingGoal === "" || typeof editingGoal !== "number" || editingGoal < 1
+				? 1
+				: editingGoal;
+		setEditingGoal(g);
 		const nextCurrent = Math.min(currentCount, g);
 		router.replace(
 			`${pathname}${buildSearchParams(description, g, nextCurrent, bgValue)}`,
@@ -138,10 +144,15 @@ export default function GoalCounterWidget(props: {
 								ref={goalInputRef}
 								type="number"
 								min={1}
-								value={editingGoal}
+								value={editingGoal === "" ? "" : editingGoal}
 								onChange={(e) => {
-									const v = parseNumber(e.target.value || null, 1);
-									setEditingGoal(Math.max(1, v));
+									const raw = e.target.value;
+									if (raw === "") {
+										setEditingGoal("");
+										return;
+									}
+									const n = parseInt(raw, 10);
+									if (!Number.isNaN(n)) setEditingGoal(n);
 								}}
 								onBlur={handleGoalBlur}
 								onKeyDown={(e) => {
@@ -157,7 +168,7 @@ export default function GoalCounterWidget(props: {
 								className="text-gray-500 text-5xl sm:text-6xl font-light tabular-nums tracking-tight bg-transparent border-none cursor-text p-0 min-w-[1.5em] h-[1.2em] align-baseline hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-inset rounded"
 								aria-label="목표 개수 수정 (클릭)"
 							>
-								{editingGoal}
+								{editingGoal === "" ? 1 : editingGoal}
 							</button>
 						)
 					) : (
