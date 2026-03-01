@@ -201,7 +201,7 @@ export default function Navbar() {
             </Link>
 
             <div className="hidden md:flex items-center gap-6">
-              {navLinks.map((link) =>
+              {navLinks.filter((link) => link.href !== "#pricing").map((link) =>
                 link.href.startsWith("/") ? (
                   <Link
                     key={link.label}
@@ -362,7 +362,7 @@ export default function Navbar() {
               />
             </div>
 
-            {navLinks.map((link) =>
+            {navLinks.filter((link) => link.href !== "#pricing").map((link) =>
               link.href.startsWith("/") ? (
                 <Link
                   key={link.label}

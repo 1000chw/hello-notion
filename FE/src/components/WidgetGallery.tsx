@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Copy, Check, Clock, Calendar, Cloud, Timer, CheckSquare, Quote, Users, Music, Target } from "lucide-react";
+import Link from "next/link";
+import { Copy, Check, Clock, Calendar, Cloud, Timer, CheckSquare, Quote, Users, Music, Target, Settings } from "lucide-react";
 import { clsx } from "clsx";
 
 const widgets = [
@@ -14,6 +15,7 @@ const widgets = [
     iconColor: "text-emerald-600",
     tags: ["생산성", "무료"],
     link: "/w/goal-counter",
+    configPage: true,
   },
   {
     id: "clock",
@@ -100,9 +102,11 @@ const widgets = [
 function WidgetCard({ widget }: { widget: (typeof widgets)[0] }) {
   const [copied, setCopied] = useState(false);
   const Icon = widget.icon;
+  const isConfigPage = "configPage" in widget && widget.configPage;
 
   const handleCopy = (e: React.MouseEvent) => {
     e.preventDefault();
+    e.stopPropagation();
     const url = widget.link.startsWith("http")
       ? widget.link
       : `${typeof window !== "undefined" ? window.location.origin : ""}${widget.link}`;
@@ -116,8 +120,8 @@ function WidgetCard({ widget }: { widget: (typeof widgets)[0] }) {
     return () => clearTimeout(timerId);
   }, [copied]);
 
-  return (
-    <div className="group relative bg-white rounded-2xl border border-gray-100 p-5 hover:shadow-md hover:border-gray-200 transition-all duration-200 cursor-pointer flex flex-col gap-4">
+  const cardContent = (
+    <>
       {/* Icon + Tags */}
       <div className="flex items-start justify-between">
         <div className={clsx("w-11 h-11 rounded-xl flex items-center justify-center", widget.color)}>
@@ -146,36 +150,65 @@ function WidgetCard({ widget }: { widget: (typeof widgets)[0] }) {
         <p className="text-xs text-gray-500 leading-relaxed">{widget.description}</p>
       </div>
 
-      {/* Copy button */}
-      <button
-        onClick={handleCopy}
-        className={clsx(
-          "mt-auto flex items-center justify-center gap-1.5 w-full py-2 rounded-xl text-xs font-semibold transition-all duration-150 cursor-pointer border",
-          copied
-            ? "bg-teal-50 text-teal-600 border-teal-200"
-            : "bg-gray-50 hover:bg-teal-50 text-gray-600 hover:text-teal-600 border-gray-100 hover:border-teal-200"
-        )}
-        aria-label={`${widget.name} 링크 복사`}
+      {/* Copy / Config button */}
+      {isConfigPage ? (
+        <span
+          className={clsx(
+            "mt-auto flex items-center justify-center gap-1.5 w-full py-2 rounded-xl text-xs font-semibold transition-all duration-150 cursor-pointer border",
+            "bg-gray-50 hover:bg-teal-50 text-gray-600 hover:text-teal-600 border-gray-100 hover:border-teal-200"
+          )}
+        >
+          <Settings size={13} />
+          설정하러 가기
+        </span>
+      ) : (
+        <button
+          onClick={handleCopy}
+          className={clsx(
+            "mt-auto flex items-center justify-center gap-1.5 w-full py-2 rounded-xl text-xs font-semibold transition-all duration-150 cursor-pointer border",
+            copied
+              ? "bg-teal-50 text-teal-600 border-teal-200"
+              : "bg-gray-50 hover:bg-teal-50 text-gray-600 hover:text-teal-600 border-gray-100 hover:border-teal-200"
+          )}
+          aria-label={`${widget.name} 링크 복사`}
+        >
+          {copied ? (
+            <>
+              <Check size={13} />
+              복사됨!
+            </>
+          ) : (
+            <>
+              <Copy size={13} />
+              링크 복사
+            </>
+          )}
+        </button>
+      )}
+    </>
+  );
+
+  if (isConfigPage) {
+    return (
+      <Link
+        href={widget.link}
+        className="group relative bg-white rounded-2xl border border-gray-100 p-5 hover:shadow-md hover:border-gray-200 transition-all duration-200 cursor-pointer flex flex-col gap-4 block"
       >
-        {copied ? (
-          <>
-            <Check size={13} />
-            복사됨!
-          </>
-        ) : (
-          <>
-            <Copy size={13} />
-            링크 복사
-          </>
-        )}
-      </button>
+        {cardContent}
+      </Link>
+    );
+  }
+
+  return (
+    <div className="group relative bg-white rounded-2xl border border-gray-100 p-5 hover:shadow-md hover:border-gray-200 transition-all duration-200 flex flex-col gap-4">
+      {cardContent}
     </div>
   );
 }
 
 export default function WidgetGallery() {
   return (
-    <section id="gallery" className="py-20 sm:py-28 bg-gray-50/50">
+    <section id="gallery" className="py-20 sm:py-28 bg-gradient-to-b from-teal-50 via-white to-white">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         {/* Header */}
         <div className="text-center mb-12">
