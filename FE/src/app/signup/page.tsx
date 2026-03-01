@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { getSupabase } from "@/lib/supabase";
+import { getSupabase, hasValidSession } from "@/lib/supabase";
 import Navbar from "@/components/Navbar";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -113,8 +113,8 @@ export default function SignupPage() {
     };
   }, [nickname, checkNicknameAvailable]);
     const checkSession = async () => {
-      const { data } = await getSupabase().auth.getSession();
-      if (data.session) {
+      const valid = await hasValidSession();
+      if (valid) {
         router.replace("/");
         return;
       }
