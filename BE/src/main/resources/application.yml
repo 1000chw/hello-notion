@@ -7,3 +7,5 @@ supabase:
     secret: ${SUPABASE_JWT_SECRET:}
     # Optional: validate issuer, e.g. https://<project-id>.supabase.co/auth/v1
     issuer: ${SUPABASE_JWT_ISSUER:}
+  url: ${SUPABASE_URL:}
+  service-role-key: ${SUPABASE_SERVICE_ROLE_KEY:}

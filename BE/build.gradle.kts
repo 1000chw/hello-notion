@@ -16,6 +16,7 @@ repositories {
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
@@ -23,11 +24,14 @@ dependencies {
     // JWT validation (Supabase uses HS256 with JWT secret)
     implementation("com.auth0:java-jwt:4.4.0")
 
+    // WebP image encoding for widget background uploads
+    implementation("com.twelvemonkeys.imageio:imageio-webp:3.13.0")
+
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
 tasks.withType<KotlinJvmCompile>().configureEach {
     compilerOptions {
-        jvmTarget.set(JvmTarget.JVM_17)
+        jvmTarget.set(JvmTarget.JVM_21)
     }
 }

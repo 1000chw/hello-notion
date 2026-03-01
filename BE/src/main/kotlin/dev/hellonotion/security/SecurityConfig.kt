@@ -29,6 +29,7 @@ class SecurityConfig(
             }
             .authorizeHttpRequests {
                 it.requestMatchers("/api/v1/auth/me").authenticated()
+                it.requestMatchers("/api/v1/images/**").authenticated()
                 it.anyRequest().permitAll()
             }
             .addFilterBefore(JwtAuthFilter(jwtProperties), UsernamePasswordAuthenticationFilter::class.java)
