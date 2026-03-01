@@ -1,4 +1,5 @@
 import Navbar from "@/components/Navbar";
+import PageBackground from "@/components/PageBackground";
 import HeroSection from "@/components/HeroSection";
 import WidgetGallery from "@/components/WidgetGallery";
 import Features from "@/components/Features";
@@ -10,13 +11,15 @@ export default function Home() {
   return (
     <>
       <Navbar />
-      <main>
-        <HeroSection />
-        <WidgetGallery />
-        <Features />
-        <HowItWorks />
-        <Pricing />
-      </main>
+      <PageBackground>
+        <main>
+          <HeroSection />
+          <WidgetGallery />
+          <Features />
+          <HowItWorks />
+          <Pricing />
+        </main>
+      </PageBackground>
       <Footer />
     </>
   );
