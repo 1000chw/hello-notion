@@ -1,4 +1,4 @@
-export default function WidgetLayout({
+export default function GoalCounterLayout({
   children,
 }: {
   children: React.ReactNode;

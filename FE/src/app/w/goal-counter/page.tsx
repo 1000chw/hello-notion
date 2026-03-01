@@ -4,7 +4,7 @@ import { useState, Suspense } from "react";
 import GoalCounterWidget from "@/components/widget/GoalCounterWidget";
 import { Copy, Check } from "lucide-react";
 
-export default function WidgetPage() {
+export default function GoalCounterPage() {
   const [copied, setCopied] = useState(false);
 
   const handleCopyLink = () => {

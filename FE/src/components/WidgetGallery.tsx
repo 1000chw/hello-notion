@@ -13,7 +13,7 @@ const widgets = [
     color: "bg-emerald-50",
     iconColor: "text-emerald-600",
     tags: ["생산성", "무료"],
-    link: "/widget",
+    link: "/w/goal-counter",
   },
   {
     id: "clock",
