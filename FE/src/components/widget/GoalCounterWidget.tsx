@@ -40,18 +40,25 @@ function buildSearchParams(desc: string, goal: number, current: number, bg: stri
 	return q ? `?${q}` : "";
 }
 
-export default function GoalCounterWidget() {
+export default function GoalCounterWidget(props: {
+	overrideDesc?: string;
+	overrideGoal?: number;
+} = {}) {
 	const pathname = usePathname();
 	const searchParams = useSearchParams();
 	const router = useRouter();
+	const { overrideDesc, overrideGoal } = props;
 
-	// Derive from URL (single source of truth). No effect → no cascading setState.
-	const description = searchParams.get("desc") ?? "";
-	const goalCount = Math.max(1, parseNumber(searchParams.get("goal"), 1));
-	const currentCount = Math.min(
+	// Derive from URL (single source of truth). Override props = 설정 페이지에서 실시간 미리보기용.
+	const urlDesc = searchParams.get("desc") ?? "";
+	const urlGoal = Math.max(1, parseNumber(searchParams.get("goal"), 1));
+	const urlCurrent = Math.min(
 		parseNumber(searchParams.get("current"), 0),
-		goalCount
+		urlGoal
 	);
+	const description = overrideDesc !== undefined ? overrideDesc : urlDesc;
+	const goalCount = overrideGoal !== undefined ? Math.max(1, overrideGoal) : urlGoal;
+	const currentCount = Math.min(urlCurrent, goalCount);
 	const bgParam = searchParams.get("bg") ?? "white";
 	const bgValue = BG_OPTIONS.some((o) => o.value === bgParam) ? bgParam : "white";
 

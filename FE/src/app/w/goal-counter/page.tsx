@@ -33,6 +33,16 @@ function GoalCounterPageContent() {
   const current = parseNumber(searchParams.get("current"), 0);
   const bg = searchParams.get("bg") ?? "white";
 
+  // 입력 중에는 로컬 state만 갱신하고, onBlur 시 URL 반영 → 커서가 맨 뒤로 가지 않음
+  const [editingDesc, setEditingDesc] = useState(desc);
+  const [editingGoal, setEditingGoal] = useState<number | "">(goal);
+  useEffect(() => {
+    queueMicrotask(() => {
+      setEditingDesc(desc);
+      setEditingGoal(goal);
+    });
+  }, [desc, goal]);
+
   const updateUrl = (updates: {
     desc?: string;
     goal?: number;
@@ -118,8 +128,9 @@ function GoalCounterPageContent() {
                       </label>
                       <input
                         type="text"
-                        value={desc}
-                        onChange={(e) => updateUrl({ desc: e.target.value })}
+                        value={editingDesc}
+                        onChange={(e) => setEditingDesc(e.target.value)}
+                        onBlur={() => updateUrl({ desc: editingDesc })}
                         placeholder="예: 운동하기, 책 읽기"
                         className="w-full px-3 py-2 rounded-lg border border-gray-200 text-gray-900 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                         aria-label="목표 설명"
@@ -132,11 +143,24 @@ function GoalCounterPageContent() {
                       </label>
                       <input
                         type="number"
-                        min={1}
-                        value={goal}
+                        min={0}
+                        value={editingGoal === "" ? "" : editingGoal}
                         onChange={(e) => {
-                          const v = parseNumber(e.target.value || null, 1);
-                          updateUrl({ goal: Math.max(1, v), current: Math.min(current, Math.max(1, v)) });
+                          const raw = e.target.value;
+                          if (raw === "") {
+                            setEditingGoal("");
+                            return;
+                          }
+                          const v = parseNumber(raw, 0);
+                          setEditingGoal(v < 0 ? 0 : v);
+                        }}
+                        onBlur={() => {
+                          const g = editingGoal === "" ? 0 : editingGoal;
+                          const goalForUrl = Math.max(1, g);
+                          updateUrl({ goal: goalForUrl, current: Math.min(current, goalForUrl) });
+                          if (editingGoal === "" || g < 1) {
+                            setEditingGoal(goalForUrl);
+                          }
                         }}
                         className="w-full px-3 py-2 rounded-lg border border-gray-200 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
                         aria-label="목표 개수"
@@ -187,14 +211,17 @@ function GoalCounterPageContent() {
                 </div>
               </aside>
 
-              {/* 우측: 위젯 미리보기만 */}
+              {/* 우측: 위젯 미리보기 (입력값 실시간 반영) */}
               <div className="flex-1 min-w-0 w-full flex items-start justify-center md:justify-start order-2 md:order-2">
                 <Suspense
                   fallback={
                     <div className="w-full max-w-sm p-4 rounded-2xl border border-gray-200 bg-white animate-pulse h-64" />
                   }
                 >
-                  <GoalCounterWidget />
+                  <GoalCounterWidget
+                    overrideDesc={editingDesc}
+                    overrideGoal={editingGoal === "" ? 1 : editingGoal}
+                  />
                 </Suspense>
               </div>
             </div>
