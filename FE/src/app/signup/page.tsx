@@ -112,6 +112,8 @@ export default function SignupPage() {
       if (nicknameCheckTimeoutRef.current) clearTimeout(nicknameCheckTimeoutRef.current);
     };
   }, [nickname, checkNicknameAvailable]);
+
+  useEffect(() => {
     const checkSession = async () => {
       const valid = await hasValidSession();
       if (valid) {
