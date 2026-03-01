@@ -102,7 +102,7 @@ const widgets = [
 function WidgetCard({ widget }: { widget: (typeof widgets)[0] }) {
   const [copied, setCopied] = useState(false);
   const Icon = widget.icon;
-  const isConfigPage = "configPage" in widget && (widget as { configPage?: boolean }).configPage;
+  const isConfigPage = "configPage" in widget && widget.configPage;
 
   const handleCopy = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -200,7 +200,7 @@ function WidgetCard({ widget }: { widget: (typeof widgets)[0] }) {
   }
 
   return (
-    <div className="group relative bg-white rounded-2xl border border-gray-100 p-5 hover:shadow-md hover:border-gray-200 transition-all duration-200 cursor-pointer flex flex-col gap-4">
+    <div className="group relative bg-white rounded-2xl border border-gray-100 p-5 hover:shadow-md hover:border-gray-200 transition-all duration-200 flex flex-col gap-4">
       {cardContent}
     </div>
   );
@@ -208,7 +208,7 @@ function WidgetCard({ widget }: { widget: (typeof widgets)[0] }) {
 
 export default function WidgetGallery() {
   return (
-    <section id="gallery" className="py-20 sm:py-28 bg-gray-50/50">
+    <section id="gallery" className="py-20 sm:py-28 bg-gradient-to-b from-teal-50 via-white to-white">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         {/* Header */}
         <div className="text-center mb-12">

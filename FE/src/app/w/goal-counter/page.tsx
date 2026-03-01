@@ -29,7 +29,7 @@ function GoalCounterPageContent() {
   const isEmbedded = useIsEmbedded();
 
   const desc = searchParams.get("desc") ?? "";
-  const goal = parseNumber(searchParams.get("goal"), 1);
+  const goal = Math.max(1, parseNumber(searchParams.get("goal"), 1));
   const current = parseNumber(searchParams.get("current"), 0);
   const bg = searchParams.get("bg") ?? "white";
 
@@ -39,11 +39,13 @@ function GoalCounterPageContent() {
     current?: number;
     bg?: string;
   }) => {
-    const newDesc = updates.desc !== undefined ? updates.desc : desc;
-    const newGoal = updates.goal !== undefined ? updates.goal : goal;
-    const newCurrent = updates.current !== undefined ? updates.current : current;
-    const newBg = updates.bg !== undefined ? updates.bg : bg;
-    const query = buildSearchParams(newDesc, newGoal, newCurrent, newBg);
+    const newParams = { desc, goal, current, bg, ...updates };
+    const query = buildSearchParams(
+      newParams.desc,
+      newParams.goal,
+      newParams.current,
+      newParams.bg
+    );
     router.replace(`/w/goal-counter${query}`, { scroll: false });
   };
 
