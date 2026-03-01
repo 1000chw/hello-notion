@@ -178,19 +178,6 @@ export default function WidgetGallery() {
             <WidgetCard key={widget.id} widget={widget} />
           ))}
         </div>
-
-        {/* View all */}
-        <div className="text-center mt-10">
-          <a
-            href="/gallery"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-gray-200 bg-white text-sm font-semibold text-gray-700 hover:border-teal-300 hover:text-teal-600 transition-all duration-200 cursor-pointer shadow-sm"
-          >
-            모든 위젯 보기
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-              <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </a>
-        </div>
       </div>
     </section>
   );
