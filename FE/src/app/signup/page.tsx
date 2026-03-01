@@ -80,6 +80,9 @@ export default function SignupPage() {
       const { data, error: signUpError } = await getSupabase().auth.signUp({
         email: email.trim(),
         password,
+        options: {
+          emailRedirectTo: `${typeof window !== "undefined" ? window.location.origin : ""}/auth/callback`,
+        },
       });
       if (signUpError) throw signUpError;
       // 이메일 확인이 필요한 경우에도 성공으로 처리하고 홈으로 이동
