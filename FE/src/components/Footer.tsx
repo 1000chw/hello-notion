@@ -53,7 +53,9 @@ export default function Footer() {
                 {group.heading}
               </p>
               <ul className="space-y-3">
-                {group.links.map((link) => (
+                {group.links
+                  .filter((link) => link.href !== "#pricing")
+                  .map((link) => (
                   <li key={link.label}>
                     <a
                       href={link.href}

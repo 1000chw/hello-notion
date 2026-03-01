@@ -17,7 +17,9 @@ export default function Home() {
           <WidgetGallery />
           <Features />
           <HowItWorks />
-          <Pricing />
+          <div className="hidden" aria-hidden>
+            <Pricing />
+          </div>
         </main>
       </PageBackground>
       <Footer />
