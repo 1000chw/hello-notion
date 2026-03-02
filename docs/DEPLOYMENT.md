@@ -80,10 +80,24 @@ main 브랜치 기준으로 **FE → Vercel**, **Supabase(DB·인증) → Supaba
 
 ---
 
-## 4. 참고
+## 4. BE 서버 배포 (선택)
+
+시계 위젯 이미지 업로드 등 BE API를 쓰려면 Spring Boot 앱을 별도 플랫폼에 배포해야 합니다. Supabase에는 BE를 올릴 수 없습니다.
+
+| 플랫폼 | 설명 |
+|--------|------|
+| [Railway](https://railway.app) | GitHub 연결 후 `BE` 루트로 빌드, JAR 배포. env에 `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` 등 설정 |
+| [Render](https://render.com) | Web Service로 JAR 실행 또는 Docker 배포 |
+| [Fly.io](https://fly.io) | Dockerfile 작성 후 `fly launch`로 배포 |
+
+배포한 BE URL을 Vercel 환경 변수 `NEXT_PUBLIC_API_URL`(또는 FE에서 사용하는 API 베이스 URL)에 넣으면 됩니다.
+
+---
+
+## 5. 참고
 
 - **env 지정 위치**
   - **로컬 개발**: `FE/.env` 또는 `FE/.env.local` (이미 `.gitignore`에 있음)
   - **Vercel**: 대시보드 **Settings → Environment Variables** (또는 Vercel CLI)
   - **Supabase** 자체의 DB/Auth 설정은 Supabase Dashboard에서만 하면 됩니다.
-- Kotlin/Spring Boot 같은 별도 BE 서버는 현재 저장소에 없으며, 있다면 Railway·Fly·등에 별도 배포하고 그 URL을 FE에서 사용하는 방식으로 확장할 수 있습니다.
+- **BE 서버(Spring Boot)**: Supabase는 DB·Auth·Storage만 제공합니다. **커스텀 BE 앱은 Supabase에 올릴 수 없고**, Railway, Render, Fly.io, AWS, GCP 등 별도 호스팅에 배포해야 합니다. 배포 후 해당 BE URL을 FE의 `NEXT_PUBLIC_API_URL` 등으로 지정해 사용하면 됩니다.
