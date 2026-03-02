@@ -105,7 +105,7 @@ if (res.ok) {
 
 ```bash
 cd backend
-cp .env.example .env
+cp env.txt.example env.txt
 # .env에 SUPABASE_JWT_SECRET 설정
 
 gradle bootRun

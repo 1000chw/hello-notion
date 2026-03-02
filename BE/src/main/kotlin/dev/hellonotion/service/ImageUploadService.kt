@@ -10,10 +10,8 @@ import org.springframework.web.reactive.function.client.bodyToMono
 import java.awt.image.BufferedImage
 import java.io.ByteArrayOutputStream
 import java.util.UUID
-import javax.imageio.IIOImage
 import javax.imageio.ImageIO
-import javax.imageio.ImageWriteParam
-import javax.imageio.stream.ImageOutputStream
+import javax.imageio.spi.IIORegistry
 
 @Service
 class ImageUploadService(
@@ -30,6 +28,9 @@ class ImageUploadService(
             "image/gif",
             "image/webp",
         )
+        @Volatile
+        private var webPSpiRegistered = false
+        private val webPSpiLock = Any()
     }
 
     fun uploadToStorage(
@@ -43,18 +44,29 @@ class ImageUploadService(
 
         val bufferedImage = ImageIO.read(imageBytes.inputStream())
             ?: throw IllegalArgumentException("Unsupported or invalid image format")
-        val webpBytes = convertToWebP(bufferedImage)
-        val fileName = "${UUID.randomUUID()}.webp"
-        val objectPath = "$userId/$fileName"
 
+        val (bodyBytes, contentTypeToUse, ext) = try {
+            ensureWebPSpiRegistered()
+            val out = ByteArrayOutputStream()
+            if (ImageIO.write(bufferedImage, "webp", out)) {
+                Triple(out.toByteArray(), MediaType.parseMediaType("image/webp"), "webp")
+            } else {
+                useOriginal(imageBytes, contentType)
+            }
+        } catch (_: Exception) {
+            useOriginal(imageBytes, contentType)
+        }
+
+        val fileName = "${UUID.randomUUID()}.$ext"
+        val objectPath = "$userId/$fileName"
         val uploadUrl = "${supabaseProperties.url.trimEnd('/')}/storage/v1/object/$BUCKET/$objectPath"
         webClient.build()
             .post()
             .uri(uploadUrl)
             .header(HttpHeaders.AUTHORIZATION, "Bearer ${supabaseProperties.serviceRoleKey}")
             .header("apikey", supabaseProperties.serviceRoleKey)
-            .contentType(MediaType.parseMediaType("image/webp"))
-            .body(BodyInserters.fromValue(webpBytes))
+            .contentType(contentTypeToUse)
+            .body(BodyInserters.fromValue(bodyBytes))
             .retrieve()
             .bodyToMono<String>()
             .block() ?: ""
@@ -62,24 +74,28 @@ class ImageUploadService(
         return "${supabaseProperties.url.trimEnd('/')}/storage/v1/object/public/$BUCKET/$objectPath"
     }
 
-    private fun convertToWebP(image: BufferedImage): ByteArray {
-        val out = ByteArrayOutputStream()
-        val writerIter = ImageIO.getImageWritersByFormatName("webp")
-        val writer = if (writerIter.hasNext()) writerIter.next() else ImageIO.getImageWritersByFormatName("WebP").let { if (it.hasNext()) it.next() else null }
-            ?: throw IllegalStateException("WebP ImageWriter not available (check imageio-webp dependency)")
-        try {
-            val ios = ImageIO.createImageOutputStream(out)
-            writer.output = ios
-            val param = writer.defaultWriteParam
-            if (param is ImageWriteParam) {
-                param.compressionMode = ImageWriteParam.MODE_EXPLICIT
-                param.compressionQuality = 0.85f
-            }
-            writer.write(null, IIOImage(image, null, null), param)
-            ios.close()
-        } finally {
-            writer.dispose()
+    private fun useOriginal(imageBytes: ByteArray, contentType: String): Triple<ByteArray, MediaType, String> {
+        val (mediaType, ext) = when {
+            contentType.contains("jpeg") || contentType.contains("jpg") ->
+                MediaType.parseMediaType("image/jpeg") to "jpg"
+            contentType.contains("png") -> MediaType.parseMediaType("image/png") to "png"
+            contentType.contains("gif") -> MediaType.parseMediaType("image/gif") to "gif"
+            contentType.contains("webp") -> MediaType.parseMediaType("image/webp") to "webp"
+            else -> MediaType.parseMediaType("image/png") to "png"
         }
-        return out.toByteArray()
+        return Triple(imageBytes, mediaType, ext)
+    }
+
+    private fun ensureWebPSpiRegistered() {
+        if (webPSpiRegistered) return
+        synchronized(webPSpiLock) {
+            if (webPSpiRegistered) return
+            try {
+                val spiClass = Class.forName("com.twelvemonkeys.imageio.plugins.webp.WebPImageWriterSpi")
+                val spi = spiClass.getDeclaredConstructor().newInstance() as javax.imageio.spi.ImageWriterSpi
+                IIORegistry.getDefaultInstance().registerServiceProvider(spi)
+            } catch (_: Exception) { }
+            webPSpiRegistered = true
+        }
     }
 }

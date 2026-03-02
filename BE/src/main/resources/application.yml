@@ -1,11 +1,18 @@
 server:
-  port: 8080
+    port: 8080
+
+# Logging
+logging:
+    level:
+        root: INFO
+        dev.hellonotion: DEBUG
+        org.springframework.web.servlet.mvc.method.annotation: DEBUG
 
 # Supabase JWT validation (from env: SUPABASE_JWT_SECRET)
 supabase:
-  jwt:
-    secret: ${SUPABASE_JWT_SECRET:}
-    # Optional: validate issuer, e.g. https://<project-id>.supabase.co/auth/v1
-    issuer: ${SUPABASE_JWT_ISSUER:}
-  url: ${SUPABASE_URL:}
-  service-role-key: ${SUPABASE_SERVICE_ROLE_KEY:}
+    jwt:
+        secret: ${SUPABASE_JWT_SECRET:}
+        # Optional: validate issuer, e.g.
+        issuer: ${SUPABASE_JWT_ISSUER:}
+    url: ${SUPABASE_URL:}
+    service-role-key: ${SUPABASE_SERVICE_ROLE_KEY:}

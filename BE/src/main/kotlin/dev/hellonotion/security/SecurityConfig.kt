@@ -1,6 +1,7 @@
 package dev.hellonotion.security
 
 import dev.hellonotion.config.JwtProperties
+import dev.hellonotion.config.SupabaseProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -13,9 +14,10 @@ import org.springframework.web.cors.CorsConfigurationSource
 
 @Configuration
 @EnableWebSecurity
-@EnableConfigurationProperties(JwtProperties::class)
+@EnableConfigurationProperties(JwtProperties::class, SupabaseProperties::class)
 class SecurityConfig(
     private val jwtProperties: JwtProperties,
+    private val supabaseProperties: SupabaseProperties,
     private val corsConfigurationSource: CorsConfigurationSource,
 ) {
 
@@ -32,6 +34,6 @@ class SecurityConfig(
                 it.requestMatchers("/api/v1/images/**").authenticated()
                 it.anyRequest().permitAll()
             }
-            .addFilterBefore(JwtAuthFilter(jwtProperties), UsernamePasswordAuthenticationFilter::class.java)
+            .addFilterBefore(JwtAuthFilter(jwtProperties, supabaseProperties), UsernamePasswordAuthenticationFilter::class.java)
             .build()
 }
