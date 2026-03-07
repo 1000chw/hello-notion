@@ -94,6 +94,30 @@ main 브랜치 기준으로 **FE → Vercel**, **Supabase(DB·인증) → Supaba
 
 ---
 
+## 4.1 BE Docker 빌드·실행 (로컬/배포)
+
+BE를 Docker로 빌드해 같은 방식으로 로컬 또는 서버에서 실행할 수 있습니다.
+
+**이미지 빌드**
+
+```bash
+docker build -t hello-notion-be ./BE
+```
+
+**컨테이너 실행** (환경 변수로 Supabase 설정 주입)
+
+```bash
+docker run -p 8080:8080 \
+  -e SUPABASE_URL="https://<project-ref>.supabase.co" \
+  -e SUPABASE_SERVICE_ROLE_KEY="<service-role-key>" \
+  -e SUPABASE_JWT_SECRET="<jwt-secret>" \
+  hello-notion-be
+```
+
+필요 시 `SUPABASE_JWT_ISSUER` 등 추가 환경 변수를 `-e`로 넘기면 됩니다.
+
+---
+
 ## 5. 참고
 
 - **env 지정 위치**

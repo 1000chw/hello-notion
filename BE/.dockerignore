@@ -1,0 +1,27 @@
+# Gradle
+.gradle/
+build/
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+
+# Env / secrets
+.env
+.env.*
+.env.local
+env.txt
+
+# Logs / outputs
+*.log
+out/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Misc
+*.md
