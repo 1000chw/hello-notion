@@ -8,21 +8,21 @@ import Pricing from "@/components/Pricing";
 import Footer from "@/components/Footer";
 
 export default function Home() {
-  return (
-    <>
-      <Navbar />
-      <PageBackground>
-        <main>
-          <HeroSection />
-          <WidgetGallery />
-          <Features />
-          <HowItWorks />
-          <div className="hidden" aria-hidden>
-            <Pricing />
-          </div>
-        </main>
-      </PageBackground>
-      <Footer />
-    </>
-  );
+	return (
+		<>
+			<Navbar />
+			<PageBackground>
+				<main>
+					<HeroSection />
+					<WidgetGallery />
+					<Features />
+					<HowItWorks />
+					<div className="hidden" aria-hidden>
+						<Pricing />
+					</div>
+				</main>
+			</PageBackground>
+			<Footer />
+		</>
+	);
 }

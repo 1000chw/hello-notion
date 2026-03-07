@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Copy, Check, Clock, Target, Settings } from "lucide-react";
+import { Copy, Check, Clock, Target, Settings, Quote } from "lucide-react";
 import { clsx } from "clsx";
 
 const widgets = [
@@ -26,6 +26,17 @@ const widgets = [
     iconColor: "text-teal-600",
     tags: ["시간", "무료"],
     link: "/w/clock-minimal",
+    configPage: true,
+  },
+  {
+    id: "anime-wise-saying",
+    name: "애니 명언",
+    description: "일본 애니 명언을 일·영·한으로 읽어보세요. 랜덤 명언 위젯.",
+    icon: Quote,
+    color: "bg-violet-50",
+    iconColor: "text-violet-600",
+    tags: ["명언", "무료"],
+    link: "/w/anime-wise-saying",
     configPage: true,
   },
 ];
