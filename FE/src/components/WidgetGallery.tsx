@@ -25,7 +25,8 @@ const widgets = [
     color: "bg-teal-50",
     iconColor: "text-teal-600",
     tags: ["시간", "무료"],
-    link: "https://hello-notion.com/w/clock-minimal",
+    link: "/w/clock-minimal",
+    configPage: true,
   },
   {
     id: "calendar",

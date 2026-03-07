@@ -1,5 +1,6 @@
 package dev.hellonotion.config
 
+import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.cors.CorsConfiguration
@@ -10,6 +11,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
  * CORS for FE development. Allow localhost:3000 (Next.js dev).
  */
 @Configuration
+@EnableConfigurationProperties(SupabaseProperties::class)
 class WebConfig {
 
     @Bean
