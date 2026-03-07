@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Copy, Check, Clock, Calendar, Cloud, Timer, CheckSquare, Quote, Users, Music, Target, Settings } from "lucide-react";
+import { Copy, Check, Clock, Target, Settings } from "lucide-react";
 import { clsx } from "clsx";
 
 const widgets = [
@@ -27,76 +27,6 @@ const widgets = [
     tags: ["시간", "무료"],
     link: "/w/clock-minimal",
     configPage: true,
-  },
-  {
-    id: "calendar",
-    name: "미니 달력",
-    description: "이번 달 날짜를 한눈에 확인",
-    icon: Calendar,
-    color: "bg-blue-50",
-    iconColor: "text-blue-600",
-    tags: ["날짜", "무료"],
-    link: "https://hello-notion.com/w/calendar-mini",
-  },
-  {
-    id: "weather",
-    name: "날씨 위젯",
-    description: "실시간 날씨와 7일 예보",
-    icon: Cloud,
-    color: "bg-sky-50",
-    iconColor: "text-sky-500",
-    tags: ["날씨", "무료"],
-    link: "https://hello-notion.com/w/weather",
-  },
-  {
-    id: "pomodoro",
-    name: "포모도로 타이머",
-    description: "집중 & 휴식 사이클 관리",
-    icon: Timer,
-    color: "bg-orange-50",
-    iconColor: "text-orange-500",
-    tags: ["생산성", "무료"],
-    link: "https://hello-notion.com/w/pomodoro",
-  },
-  {
-    id: "todo",
-    name: "할일 목록",
-    description: "노션 DB와 연동되는 투두리스트",
-    icon: CheckSquare,
-    color: "bg-green-50",
-    iconColor: "text-green-600",
-    tags: ["생산성", "Pro"],
-    link: "https://hello-notion.com/w/todo",
-  },
-  {
-    id: "quote",
-    name: "오늘의 명언",
-    description: "매일 새로운 영감을 주는 명언",
-    icon: Quote,
-    color: "bg-violet-50",
-    iconColor: "text-violet-600",
-    tags: ["영감", "무료"],
-    link: "https://hello-notion.com/w/quote",
-  },
-  {
-    id: "visitor",
-    name: "방문자 카운터",
-    description: "페이지 방문 횟수 실시간 표시",
-    icon: Users,
-    color: "bg-pink-50",
-    iconColor: "text-pink-500",
-    tags: ["분석", "무료"],
-    link: "https://hello-notion.com/w/visitor",
-  },
-  {
-    id: "music",
-    name: "음악 플레이어",
-    description: "집중할 때 듣기 좋은 lo-fi 라디오",
-    icon: Music,
-    color: "bg-amber-50",
-    iconColor: "text-amber-600",
-    tags: ["음악", "무료"],
-    link: "https://hello-notion.com/w/music",
   },
 ];
 
