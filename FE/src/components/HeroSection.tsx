@@ -81,7 +81,7 @@ export default function HeroSection() {
           }}
         >
           <a
-            href="#gallery"
+            href="/gallery"
             className="group flex items-center gap-2 px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-full shadow-md hover:shadow-teal-200 transition-all duration-200 cursor-pointer text-sm"
           >
             위젯 둘러보기
