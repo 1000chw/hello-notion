@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Copy, Check, Clock, Target, Settings, Quote } from "lucide-react";
+import { Copy, Check, Clock, Target, Settings, Quote, CalendarDays } from "lucide-react";
 import { clsx } from "clsx";
 
 const widgets = [
@@ -26,6 +26,17 @@ const widgets = [
     iconColor: "text-teal-600",
     tags: ["시간", "무료"],
     link: "/w/clock-minimal",
+    configPage: true,
+  },
+  {
+    id: "calendar",
+    name: "달력",
+    description: "한국 공휴일/기념일 표시 · 20가지 디자인 선택",
+    icon: CalendarDays,
+    color: "bg-sky-50",
+    iconColor: "text-sky-600",
+    tags: ["달력", "무료"],
+    link: "/w/calendar",
     configPage: true,
   },
   {
